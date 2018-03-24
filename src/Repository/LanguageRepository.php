@@ -19,16 +19,15 @@ class LanguageRepository extends ServiceEntityRepository
         parent::__construct($registry, Language::class);
     }
 
-    /*
-    public function findBySomething($value)
+    /**
+     * @return array
+     */
+    public function getAll()
     {
         return $this->createQueryBuilder('l')
-            ->where('l.something = :value')->setParameter('value', $value)
-            ->orderBy('l.id', 'ASC')
-            ->setMaxResults(10)
+            ->orderBy('l.name', 'ASC')
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
-    */
+
 }

@@ -1,4 +1,4 @@
-table.book-list tbody tr:hover {
+table#bookList tbody tr:hover {
     background-color: #e9ecef;
     transition: background-color 0.2s;
 }

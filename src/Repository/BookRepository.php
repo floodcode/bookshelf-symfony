@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Book;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
@@ -19,16 +20,37 @@ class BookRepository extends ServiceEntityRepository
         parent::__construct($registry, Book::class);
     }
 
-    /*
-    public function findBySomething($value)
+    /**
+     * @param integer $page
+     * @param integer $perPage
+     * @param string $searchText
+     * @return Paginator
+     */
+    public function getPage($page, $perPage, $searchText = '')
     {
-        return $this->createQueryBuilder('b')
-            ->where('b.something = :value')->setParameter('value', $value)
-            ->orderBy('b.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        $queryBuilder = $this->createQueryBuilder('b');
+
+        $like = '%' . addcslashes($searchText, '%_') . '%';
+
+        if (strlen($searchText)) {
+            $queryBuilder
+                ->leftJoin('b.author', 'author')
+                ->leftJoin('b.genre', 'genre')
+                ->where('b.title LIKE :title')
+                ->orWhere('b.isbn = :query')
+                ->orWhere('author.name LIKE :title')
+                ->orWhere('genre.name LIKE :title')
+                ->setParameter('query', $searchText)
+                ->setParameter('title', $like);
+        }
+
+        $queryBuilder
+            ->orderBy('b.title', 'ASC')
+            ->setFirstResult($perPage * ($page - 1))
+            ->setMaxResults($perPage);
+
+        $query = $queryBuilder->getQuery();
+
+        return (new Paginator($query));
     }
-    */
 }

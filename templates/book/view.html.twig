@@ -1,0 +1,72 @@
+{% extends "base.html.twig" %}
+
+{% block title %}{{ book.title }}{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item"><a href="/book/list">Books</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ book.title }}</li>
+            </ol>
+        </nav>
+
+        <div class="row">
+            <div class="col">
+                <h2 class="m-0">{{ book.title }}</h2>
+            </div>
+            <div class="col">
+                <a href="#" class="btn btn-danger float-right" data-toggle="modal" data-target="#deleteModal">Delete</a>
+                <a href="/book/edit/{{ book.id }}" class="btn btn-primary float-right mr-2">Edit</a>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="clearfix">
+            {% if book.picture %}
+                <a href="/images/book/{{ book.picture }}">
+                    <img src="/images/book/{{ book.picture }}" class="img-responsive mr-4 mb-4" align="left" style="max-width: 25%">
+                </a>
+            {% endif %}
+
+            <p>
+                <strong>Genre:</strong> {{ book.genre.name }}<br>
+                <strong>Author:</strong> {{ book.author.name }}<br>
+                <strong>Language:</strong> {{ book.language.name }}<br>
+                <strong>ISBN:</strong> {{ book.isbn }}<br>
+                <strong>Published:</strong> {{ book.publicationDate.format('Y-m-d') }}
+            </p>
+
+            {% if book.description %}
+                <p class="mt-4">
+                    <strong>Book description:</strong><br>
+                    {{ book.description|nl2br }}
+                </p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    Are you sure you want to delete <strong>{{ book.title }}</strong> book?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" id="deleteBook" data-id="{{ book.id }}" class="btn btn-danger">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        $('#deleteBook').on('click', function() {
+            window.location = '/book/delete/' + $(this).data('id');
+        });
+    </script>
+{% endblock %}
